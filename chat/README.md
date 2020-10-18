@@ -16,7 +16,12 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+# delete, clear and run
+rm -rf dist && clear && npm start
+
 ```
+
 
 ## Test
 
@@ -58,3 +63,10 @@ $ npm run test:cov
 ```
 
 * Nest can't resolve dependencies of the UserEntityRepository (?). Please make sure that the argument Connection at index [0] is available in the TypeOrmModule context.
+```
+ Add entities in app.modules :
+
+ TypeOrmModule.forRoot({
+  entities: [UserEntity, PostEntity],
+ })
+```

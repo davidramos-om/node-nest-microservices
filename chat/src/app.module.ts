@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 // import { PostController } from './post/post.controller';
 // import { PostService } from './post/post.service';
 
-import { PostModule } from './post/post.module';
+import { PostsModule } from './post/posts.module';
 import { UsersModule } from './user/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,6 +20,7 @@ import { AuthService } from './auth/auth.service';
 import { UsersService } from './user/users.service';
 
 import config from '../config';
+import { PostEntity } from './post/entity/post.entity';
 
 // @Module({
 //   imports: [PostModule],
@@ -49,7 +50,7 @@ import config from '../config';
 @Module({})
 export class AppModule
 {
-  static forRoot(connOptions: ConnectionOptions): DynamicModule
+  static forRoot(): DynamicModule
   {
     return {
       module: AppModule,
@@ -57,17 +58,17 @@ export class AppModule
       imports: [        
         TypeOrmModule.forRoot({
           type: 'postgres',
-          host: config.db.host,
-          port: config.db.port,
-          username: config.db.username,
-          password: config.db.password,
-          database: config.db.database,
+          host: config.db.regional.host,
+          port: config.db.regional.port,
+          username: config.db.regional.username,
+          password: config.db.regional.password,
+          database: config.db.regional.database,
           // entities: [__dirname + "/**/entity/*.js"],
-          entities: [UserEntity],
-          synchronize: config.db.synchronize,
+          entities: [UserEntity, PostEntity],          
+          synchronize: config.db.regional.synchronize,
         }),
         AuthModule,
-        PostModule,
+        PostsModule,
         UsersModule,
         // CoreModule,
         RateLimiterModule.register({

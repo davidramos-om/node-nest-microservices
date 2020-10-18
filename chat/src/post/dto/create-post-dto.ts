@@ -29,6 +29,10 @@ export class CreatePostDto
     @IsUUID(4)
     readonly group_id: string;
 
+
+    @IsUUID(4)
+    readonly app_id: string;
+
     readonly metaData: MetaData;    
 }
 class MetaData

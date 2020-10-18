@@ -1,7 +1,7 @@
 import { POST_TYPE } from "src/common/enums";
-import { metaData } from "./metaData.interface";
+import { metaData } from "../interface/metaData.interface";
 
-export interface post {
+export class PostDto {
     id: string;
     title: string;
     body: string;

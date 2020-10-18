@@ -1,7 +1,12 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, ParseIntPipe, ParseUUIDPipe, Post, Query, Redirect, Req, Res, SetMetadata, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import
+{
+    Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, ParseUUIDPipe,
+    Post, Query, Redirect, Req, Res, SetMetadata, UseGuards, UsePipes, ValidationPipe
+} from '@nestjs/common';
+
 import { CreatePostDto } from './dto/create-post-dto'; 
-import { post } from './interface/post.interface';
-import { PostService } from './post.service';
+import { PostDto } from './dto/post-dto';
+import { PostsService } from './posts.service';
 
 import { NotItemFound, ParamRequired } from '../common/exceptions';
 import { RolesGuard } from '../auth/roles.guard';
@@ -12,20 +17,20 @@ import { UserDto } from 'src/user/dto/user.dto';
 
 @Controller('posts')
 @UseGuards(RolesGuard) // controller-scoped, method-scoped, or global-scoped
-export class PostController
+export class PostsController
 {
-    constructor(private postsService: PostService) { }
+    constructor(private postsService: PostsService) { }
     
     @Get()
     // @Roles('admin')
-    async findAll(): Promise<post[]>
+    async findAll(): Promise<PostDto[]>
     {
         return this.postsService.findAll();
     }
 
     @Get(':id')
     // @Roles('admin')
-    async findOne(@Param() params): Promise<post>        
+    async findOne(@Param() params): Promise<PostDto>        
     {
         if (!params.id)
         throw new ParamRequired('find post')
@@ -38,7 +43,7 @@ export class PostController
 
     @Get('/findBy/:keyword') 
     // @Roles('admin')
-    async findBy(@Param('keyword') keyword): Promise<post[]>
+    async findBy(@Param('keyword') keyword): Promise<PostDto[]>
     {
         if (!keyword)
             return this.postsService.findAll();
@@ -71,7 +76,7 @@ export class PostController
     @UsePipes(ValidationPipe)
     @Header('Cache-Control', 'none')
     @UseGuards(AuthGuard('jwt'))
-    async create(@Body() dto: CreatePostDto, @Req() req: any): Promise<post>
+    async create(@Body() dto: CreatePostDto, @Req() req: any): Promise<PostDto>
     {
         const user = <UserDto>req.user;
         const post = this.postsService.create(dto, user);        
@@ -87,11 +92,10 @@ export class PostController
         if (!id)
             throw new ParamRequired('delete post');
         
-        let item = this.postsService.findOne(id);
-        if (!item)
-            throw new NotItemFound(id, 'post');
-        
-        
-        return this.postsService.delete(item);
+        // let item = this.postsService.findOne(id);
+        // if (!item)
+        //     throw new NotItemFound(id, 'post');
+                
+        return this.postsService.delete(id);
     }
 }

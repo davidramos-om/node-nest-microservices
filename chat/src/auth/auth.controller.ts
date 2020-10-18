@@ -40,6 +40,7 @@ export class AuthController
     }
 
     @Post('login')
+    @UsePipes(ValidationPipe)
     public async login(@Body() loginUserDto: LoginUserDto): Promise<LoginStatus>
     {
         return await this.authService.login(loginUserDto);

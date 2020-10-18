@@ -5,7 +5,8 @@ import { DbConnectionOptions } from './common/db';
 
 import * as helmet from 'helmet';
 
-import {
+import
+  {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
@@ -16,7 +17,6 @@ import "reflect-metadata";
 
 import config from '../config';
 
-// import { RolesGuard } from './auth/roles.guard';
 async function bootstrap() {
 
   //Express
@@ -25,7 +25,7 @@ async function bootstrap() {
   //Fastify
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.forRoot(await DbConnectionOptions(config.ENVIROMENT)),
-    new FastifyAdapter({ logger: false }), {
+    new FastifyAdapter({ logger: config.LOGGER }), {
     logger: console,
   }
   );

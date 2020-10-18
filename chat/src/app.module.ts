@@ -19,6 +19,8 @@ import { UserEntity } from './user/entity/user.entity';
 import { AuthService } from './auth/auth.service';
 import { UsersService } from './user/users.service';
 
+import config from '../config';
+
 // @Module({
 //   imports: [PostModule],
 //   controllers: [AppController],
@@ -52,27 +54,26 @@ export class AppModule
     return {
       module: AppModule,
       controllers: [AppController],
-      imports: [
-        // TypeOrmModule.forRoot(connOptions),
+      imports: [        
         TypeOrmModule.forRoot({
           type: 'postgres',
-          host: 'localhost',
-          port: 5432,
-          username: 'postgres',
-          password: 'rf3t46qjgw',
-          database: 'regional',
-          // entities: ["src/**/*.entity.ts"],
-          entities: [UserEntity],          
-          synchronize: false,
+          host: config.db.host,
+          port: config.db.port,
+          username: config.db.username,
+          password: config.db.password,
+          database: config.db.database,
+          // entities: [__dirname + "/**/entity/*.js"],
+          entities: [UserEntity],
+          synchronize: config.db.synchronize,
         }),
         AuthModule,
         PostModule,
         UsersModule,
-        CoreModule,
-        // TypeOrmModule.forFeature([UserEntity]),
+        // CoreModule,
         RateLimiterModule.register({
           points: 100,
           duration: 60,
+          type: 'Memory',
           errorMessage: 'Too many requests, please try again later.',
           keyPrefix: 'global',
         }),

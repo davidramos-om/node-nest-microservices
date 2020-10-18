@@ -9,7 +9,11 @@ import {
     Catch,
     Logger,
 } from '@nestjs/common';
-  
+import { ADAPTER } from './enums';
+
+import config from '../../config';
+   
+
 export class NotItemFound extends NotFoundException
 {
     constructor(id: string, name: string)
@@ -34,7 +38,10 @@ export class HttpExceptionFilter implements ExceptionFilter
     catch(exception: HttpException, host: ArgumentsHost)
     {
         const ctx = host.switchToHttp();
+        
         const response = ctx.getResponse();
+        // const response = host.switchToHttp().getResponse<FastifyReply<ServerResponse>>();
+
         const request = ctx.getRequest();
         const status = exception.getStatus
             ? exception.getStatus()
@@ -51,12 +58,21 @@ export class HttpExceptionFilter implements ExceptionFilter
                     : 'Internal server error',
         };
 
-        Logger.error(
-            `${request.method} ${request.url}`,
-            exception.stack,
-            'HttpExceptionFilter',
-        );
+        if (config.LOGGER)
+        {
+            Logger.error(
+                `${request.method} ${request.url}`,
+                exception.stack,
+                'HttpExceptionFilter',
+            );
+        }
+        
+        //Fastity
+        if (config.APP_ADAPTER == ADAPTER.FASTITY)
+            response.status(status).send(JSON.stringify(errorResponse));
 
-        response.status(status).json(errorResponse);
+        //Express
+        if (config.APP_ADAPTER == ADAPTER.EXPRESS)
+            response.status(status).json(errorResponse);
     }
 }

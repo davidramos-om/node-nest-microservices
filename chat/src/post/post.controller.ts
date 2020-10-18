@@ -5,9 +5,9 @@ import { PostService } from './post.service';
 
 import { NotItemFound, ParamRequired } from '../common/exceptions';
 import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
+// import { Roles } from 'src/auth/roles.decorator';
 
-import { AuthGuard, PassportModule } from '@nestjs/passport';
+import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto/user.dto';
 
 @Controller('posts')

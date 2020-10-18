@@ -5,3 +5,9 @@ export enum POST_TYPE
     VIDEO = 3,
     LINK = 3
 }
+
+export enum ADAPTER
+{
+    EXPRESS = 1,
+    FASTITY = 2,
+}

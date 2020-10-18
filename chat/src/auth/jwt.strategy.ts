@@ -9,16 +9,19 @@ import config from '../../config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: AuthService)
+  {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.SECRETKEY,
     });
   }
 
-  async validate(payload: JwtPayload): Promise<UserDto> {
+  async validate(payload: JwtPayload): Promise<UserDto>
+  {
     const user = await this.authService.validateUser(payload);
-    if (!user) {
+    if (!user)
+    {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }
     return user;

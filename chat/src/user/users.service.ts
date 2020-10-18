@@ -9,6 +9,8 @@ import { LoginUserDto } from './dto/user-login.dto';
 import { comparePasswords } from '../common/utils';
 import { JwtPayload } from 'src/auth/interfaces/payload.interface';
 
+import { v4 as uuidv4 } from 'uuid';
+
 @Injectable()
 export class UsersService
 {
@@ -25,8 +27,8 @@ export class UsersService
 
     async findByLogin({ email, password }: LoginUserDto): Promise<UserDto>
     {
-        const user = await this.userRepo.findOne({ where: { email } });
-
+        const user = await this.userRepo.findOne({ where: { email: email, enabled: true } });
+        
         if (!user)
             throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
         
@@ -34,7 +36,6 @@ export class UsersService
 
         if (!areEqual)
             throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
-        
 
         return toUserDto(user);
     }
@@ -46,25 +47,24 @@ export class UsersService
 
     async create(userDto: CreateUserDto): Promise<UserDto>
     {
-        const { screen_name, password, email } = userDto;
-
-        const userInDb = await this.userRepo.findOne({ where: { screen_name } });
+        const userInDb = await this.userRepo.findOne({ where: { email: userDto.email, enabled: true } });
         if (userInDb)
             throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
         
-        const user: UserEntity = this.userRepo.create({
-            screen_name,
-            password,
-            email,
-        });
+        let item = <UserEntity>{ ...userDto };
+        item.id = uuidv4();
+        item.screen_name = userDto.screen_name;
+        item.email = userDto.email;
+        item.password = userDto.password;
+        item.app_id = "0e5aea12-c3a9-4a0a-a80c-54343148d4cd";
+        item.createdAt = new Date();
+        item.updatedAt = new Date();
+        item.enabled = true;
+                
+        const user: UserEntity = this.userRepo.create(item);
 
         await this.userRepo.save(user);
 
         return toUserDto(user);
-    } 
-
-    private _sanitizeUser(user: UserEntity) {
-        delete user.password;
-        return user;
-      }
+    }
 }

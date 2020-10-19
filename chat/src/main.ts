@@ -53,14 +53,15 @@ async function bootstrap() {
   //   } as unknown  as PostgresConnectionOptions);
 
 
+  // const regional = await DbConnectionOptions(config.db.regional.name);
+  // const core = await DbConnectionOptions(config.db.core.name);
   
   //Fastify
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.forRoot(),    
     new FastifyAdapter({ logger: config.LOGGER }), {
     logger: console,
-  }
-  );
+  });
 
   app.use(helmet());
 

@@ -21,6 +21,7 @@ import { UsersService } from './user/users.service';
 
 import config from '../config';
 import { PostEntity } from './post/entity/post.entity';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 // @Module({
 //   imports: [PostModule],
@@ -47,26 +48,82 @@ import { PostEntity } from './post/entity/post.entity';
 //   }
 // }
 
+// const regional = TypeOrmModule.forRoot({
+//   type: 'postgres',
+//   name: "regionalConnection",
+//   host: config.db.regional.host,
+//   port: config.db.regional.port,
+//   username: config.db.regional.username,
+//   password: config.db.regional.password,
+//   database: config.db.regional.database,
+//   // entities: [__dirname + "/**/entity/*.js"],
+//   synchronize: config.db.regional.synchronize,
+//   entities: [UserEntity, PostEntity],
+// });
+
 @Module({})
 export class AppModule
 {
-  static forRoot(): DynamicModule
+  
+  static forRoot(): DynamicModule    
   {
     return {
       module: AppModule,
       controllers: [AppController],
-      imports: [        
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: config.db.regional.host,
-          port: config.db.regional.port,
-          username: config.db.regional.username,
-          password: config.db.regional.password,
-          database: config.db.regional.database,
-          // entities: [__dirname + "/**/entity/*.js"],
-          entities: [UserEntity, PostEntity],          
-          synchronize: config.db.regional.synchronize,
+      imports: [
+
+        // TypeOrmModule.forRoot({
+        //   type: 'postgres',
+        //   host: config.db.regional.host,
+        //   port: config.db.regional.port,
+        //   username: config.db.regional.username,
+        //   password: config.db.regional.password,
+        //   database: config.db.regional.database,
+        //   // entities: [__dirname + "/**/entity/*.js"],
+        //   entities: [UserEntity, PostEntity],
+        //   synchronize: config.db.regional.synchronize,
+        // }),
+
+        // regional_cnn,
+        // core_cnn,
+
+        TypeOrmModule.forRootAsync({
+          // name :"regional",
+          useFactory: () => ({
+            type: 'postgres',
+            name: "regional",
+            host: config.db.regional.host,
+            port: config.db.regional.port,
+            username: config.db.regional.username,
+            password: config.db.regional.password,
+            database: config.db.regional.database,
+            // entities: [__dirname + "/**/entity/*.js"],
+            entities: [UserEntity,],
+            synchronize: config.db.regional.synchronize,
+            autoLoadEntities: false,
+          }),
         }),
+
+        TypeOrmModule.forRootAsync({
+          // name: "core",        
+          useFactory: () => ({
+            type: 'postgres',
+            name: "core",
+            host: config.db.core.host,
+            port: config.db.core.port,
+            username: config.db.core.username,
+            password: config.db.core.password,
+            database: config.db.core.database,
+            // entities: [__dirname + "/**/entity/*.js"],
+            entities: [PostEntity,],
+            synchronize: config.db.core.synchronize,
+            autoLoadEntities: false,
+          }),
+        }),
+
+        // TypeOrmModule.forRoot({ name: "regional", autoLoadEntities: true, entities: [UserEntity] }),                
+        // TypeOrmModule.forRoot({ name: "core", autoLoadEntities: true, entities: [PostEntity] }),   
+        
         AuthModule,
         PostsModule,
         UsersModule,

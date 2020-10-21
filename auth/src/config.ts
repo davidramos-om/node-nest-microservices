@@ -1,8 +1,9 @@
+import { ADAPTER } from './common/enums';
 
 const config = {
     JWT_SECRETKEY: "DEVEL-024d1f83-683b-4d44-bc29-71a101b2d7fe-APP-AUTH",
     EXPIRESIN: '12h',
-    
+    APP_ADAPTER: ADAPTER.FASTITY,
     ENVIROMENT: 'development',
     LOGGER: true,
 

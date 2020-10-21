@@ -16,7 +16,7 @@ export class UserController
     @MessagePattern({ role: 'user', cmd: 'get' })
     getUser(data: any): Promise<UserEntity>
     {
-        console.info("user microservices.getUser", data);
+        // console.info("user microservices.getUser", data);
         
         if (!data || !data.email)
             return null;

@@ -21,7 +21,7 @@ export class AuthController
   {
     try
     {
-      Logger.log('loggedIn  : Auth Guard');
+      // Logger.log('loggedIn  : Auth Guard');
 
       if (!data || !data.jwt)
         throw new HttpException('Token must be provided', HttpStatus.UNAUTHORIZED);

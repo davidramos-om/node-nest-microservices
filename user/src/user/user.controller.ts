@@ -1,9 +1,11 @@
-import { Controller, UseGuards, Get, Req } from '@nestjs/common';
+import { Controller, UseGuards, Get, Req, Post, UsePipes, ValidationPipe, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
 import { AuthGuard } from '../guards/AuthGuard';
+import { CreateUserDto } from './dto/user.create.dto';
+import { RegistrationStatus } from './dto/regisration-status.interface';
 
 @Controller('user')
 export class UserController
@@ -31,6 +33,18 @@ export class UserController
             return null;
         
         return this.userService.findOneByEmail(data.email);
+    }
+
+    @Post('register')
+    @UsePipes(ValidationPipe)
+    public async register(@Body() createUserDto: CreateUserDto): Promise<RegistrationStatus>    
+    {
+        const result = await this.userService.createUser(createUserDto);
+  
+        if (!result.success)
+            throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+          
+        return result;
     }
 
     @UseGuards(AuthGuard)

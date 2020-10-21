@@ -10,20 +10,21 @@ import { PostsService } from './posts.service';
 
 import { NotItemFound, ParamRequired } from '../common/exceptions';
 import { PostEntity } from './entity/post.entity';
+import { AuthGuard } from '../guards/AuthGuard';
 
-// import { AuthGuard } from '@nestjs/passport';
 
 @Controller('posts')
+@UseGuards(AuthGuard)
 export class PostsController
 {
     constructor(private postsService: PostsService) { }
-    
+         
     @Get()
     async findAll(): Promise<PostEntity[]>
     {
         return this.postsService.findAll();
     }
-
+ 
     @Get(':id')
     async findOne(@Param() params): Promise<PostDto>        
     {
@@ -34,8 +35,7 @@ export class PostsController
        
         return item;
     }
-
-
+ 
     @Get('/findBy/:keyword') 
     async findBy(@Param('keyword') keyword): Promise<PostEntity[]>
     {
@@ -47,7 +47,6 @@ export class PostsController
         return this.postsService.findBy(keyword);
     }
       
-    
     @Get('docs')//posts/docs?app=develapp
     @Redirect('https://mydevelapp.com/in-app-tutorials/', 302)
     getDocs(@Query('app') app)
@@ -64,22 +63,20 @@ export class PostsController
                 return { url: 'https://mydevelapp.com/app-develapp/' };
         }
     }
-    
+     
     @Post()
     @HttpCode(201)
-    @UsePipes(ValidationPipe)
-    @Header('Cache-Control', 'none')
-    // @UseGuards(AuthGuard('jwt'))
+    @UsePipes(ValidationPipe) 
+    @Header('Cache-Control', 'none') 
     async create(@Body() dto: CreatePostDto, @Req() req: any): Promise<PostDto>
     { 
         const post = this.postsService.create(dto);        
         return post;
     }
-
+ 
     @Delete(':id')
     // remove(@Param('id') id: string)
-    // @Roles('admin', 'moderator')
-    // @UseGuards(AuthGuard('jwt'))
+    // @Roles('admin', 'moderator') 
     remove(@Param('id', new ParseUUIDPipe()) id: string)
     {
         if (!id)

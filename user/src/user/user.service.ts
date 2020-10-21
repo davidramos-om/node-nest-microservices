@@ -2,12 +2,17 @@ import { Injectable, Logger, RequestTimeoutException, Inject, HttpException, Htt
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, InsertResult, FindConditions } from 'typeorm';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { timeout, catchError } from 'rxjs/operators';
 import { TimeoutError, throwError } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 
 import { UserEntity } from './user.entity';
 import config from 'src/config';
+import { RegistrationStatus } from './dto/regisration-status.interface';
+import { CreateUserDto } from './dto/user.create.dto';
+import { toUserDto } from 'src/common/mapper';
 
 
 @Injectable()
@@ -55,25 +60,43 @@ export class UserService
         return user;
     }
 
-    async createUser(user: any): Promise<InsertResult>
+    async createUser(userDto: CreateUserDto): Promise<RegistrationStatus>
     {
         try
         {
-            /**
-             * Perform all needed checks
-             */
+            const userInDb = await this.userRepository.findOne({ where: { email: userDto.email, enabled: true } });
+            if (userInDb)
+                throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+        
+            let item = this.userRepository.create();
+            item.id = uuidv4();
+            item.screen_name = userDto.screen_name;
+            item.email = userDto.email;
+            item.password = userDto.password;
+            item.app_id = userDto.app_id;
+            item.createdAt = new Date();
+            item.updatedAt = new Date();
+            item.enabled = true;
+                
+            const user: UserEntity = this.userRepository.create(item);
 
-            const userEntity = this.userRepository.create(user);
+            await this.userRepository.save(user);
 
-            const res = await this.userRepository.insert(userEntity);
+            const status: RegistrationStatus = {
+                success: false,
+                message: 'user registered'
+            };
 
-            Logger.log('createUser - Created user');
+            return status;
 
-            return res;
-        } catch (e)
+        } catch (err)
         {
-            Logger.log(e);
-            throw e;
+            const status: RegistrationStatus = {
+                success: false,
+                message: err
+            };
+
+            return status;
         }
     }
 }

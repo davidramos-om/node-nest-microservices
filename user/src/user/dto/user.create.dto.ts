@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmail, MinLength, Length, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, MinLength, Length, MaxLength, IsUUID } from 'class-validator';
 
 export class CreateUserDto
 {
@@ -14,4 +14,8 @@ export class CreateUserDto
     @IsNotEmpty()
     @IsEmail()
     email: string;
+
+    @IsUUID(4)
+    @IsNotEmpty()
+    readonly app_id: string;
 }

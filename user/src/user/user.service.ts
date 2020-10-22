@@ -1,6 +1,6 @@
-import { Injectable, Logger, RequestTimeoutException, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, RequestTimeoutException, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, InsertResult, FindConditions } from 'typeorm';
+import { Repository,  FindConditions } from 'typeorm';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,7 +12,7 @@ import { UserEntity } from './user.entity';
 import config from 'src/config';
 import { RegistrationStatus } from './dto/regisration-status.interface';
 import { CreateUserDto } from './dto/user.create.dto';
-import { toUserDto } from 'src/common/mapper';
+
 
 
 @Injectable()
@@ -29,6 +29,10 @@ export class UserService
         
     ) { }
 
+     getHello(): string {
+      return 'Hello World! I am the User MicroService';
+     }
+    
     findOne(query: FindConditions<UserEntity>): Promise<UserEntity>
     {
         return this.userRepository.findOne(query);
@@ -36,7 +40,7 @@ export class UserService
 
     findOneByEmail(email: string): Promise<UserEntity>
     {
-        return this.userRepository.findOne({ email: email, enabled: true });
+        return this.userRepository.findOne({ email: email, enabled: true })
     }
 
     async getLoguedUserInfo(token: string)

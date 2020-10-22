@@ -66,7 +66,10 @@ export class PostsService
         private readonly postRepo: Repository<PostEntity>,
     ) { }
     
-
+    getHello(): string {
+        return 'Hello World! I am Community MicroService';
+    }
+    
     async create(p: CreatePostDto): Promise<PostDto>    
     {
         let item = this.postRepo.create();
@@ -124,7 +127,7 @@ export class PostsService
             .where("lower(p.title) like :title", { title: '%' + key + '%' })
             .orWhere("lower(p.body) like :body", { body: '%' + key + '%' });
 
-        // console.info("query", q.getQueryAndParameters());
+        console.info("query", q.getSql());
         const result = await q.getMany(); 
 
         // if (result)

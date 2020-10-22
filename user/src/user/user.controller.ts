@@ -14,7 +14,7 @@ export class UserController
         
         private readonly userService: UserService
     ) { }
-
+    
     @MessagePattern({ role: 'user', cmd: 'get' })
     getUser(data: any): Promise<UserEntity>
     {
@@ -33,6 +33,12 @@ export class UserController
             return null;
         
         return this.userService.findOneByEmail(data.email);
+    }
+
+    @Get()
+    getHello(): string
+    {
+        return this.userService.getHello();
     }
 
     @Post('register')

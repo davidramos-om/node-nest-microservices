@@ -20,6 +20,13 @@ export class PostsController
     constructor(private postsService: PostsService) { }
          
     @Get()
+    getHello(): string
+    {
+        return this.postsService.getHello();
+    }
+    
+    
+    @Get('all')
     async findAll(): Promise<PostEntity[]>
     {
         return this.postsService.findAll();
@@ -29,19 +36,19 @@ export class PostsController
     async findOne(@Param() params): Promise<PostDto>        
     {
         if (!params.id)
-        throw new ParamRequired('find post')
+            throw new ParamRequired('find post')
 
         let item = this.postsService.findOne(params.id);
        
         return item;
     }
  
-    @Get('/findBy/:keyword') 
+    @Get('/findBy/:keyword')
     async findBy(@Param('keyword') keyword): Promise<PostEntity[]>
     {
         if (!keyword)
             return this.postsService.findAll();
-            // return res.send(this.postsService.findAll());
+        // return res.send(this.postsService.findAll());
         
         // return res.send(this.postsService.findBy(keyword));
         return this.postsService.findBy(keyword);
@@ -66,11 +73,11 @@ export class PostsController
      
     @Post()
     @HttpCode(201)
-    @UsePipes(ValidationPipe) 
-    @Header('Cache-Control', 'none') 
+    @UsePipes(ValidationPipe)
+    @Header('Cache-Control', 'none')
     async create(@Body() dto: CreatePostDto, @Req() req: any): Promise<PostDto>
-    { 
-        const post = this.postsService.create(dto);        
+    {
+        const post = this.postsService.create(dto);
         return post;
     }
  

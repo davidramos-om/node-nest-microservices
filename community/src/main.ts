@@ -33,6 +33,8 @@ async function bootstrap() {
 
   app.enableCors();
 
+  
+
   //Apply validation for all inputs globally
   app.useGlobalPipes(
     new ValidationPipe({      

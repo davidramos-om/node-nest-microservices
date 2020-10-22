@@ -13,9 +13,7 @@ export class AuthGuard implements CanActivate
         
   ) { }
 
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean>
+  async canActivate(context: ExecutionContext,): Promise<boolean>  
   {
     Logger.log('Connect to Auth microservice');
     const req = context.switchToHttp().getRequest();

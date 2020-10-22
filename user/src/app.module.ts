@@ -14,7 +14,8 @@ import config from './config';
     password: config.db.regional.password,
     database: config.db.regional.database,
     synchronize: config.db.regional.synchronize,
-    entities: [UserEntity]
-  }), UserModule],
+    entities: [UserEntity,]
+  }),
+    UserModule],
 })
 export class AppModule { }

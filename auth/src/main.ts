@@ -2,9 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 import { Transport } from '@nestjs/microservices/enums/transport.enum';
+import * as fs from 'fs';
+import * as helmet from 'fastify-helmet';
 
 import
-  {
+{
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
@@ -13,13 +15,22 @@ import config from './config';
 import { Logger } from '@nestjs/common';
 
 
-async function bootstrap() {
-  
+async function bootstrap()
+{
+
+  const httpsOptions = {
+    key: fs.readFileSync('./secret/key.pem', 'utf8'),
+    cert: fs.readFileSync('./secret/server.crt', 'utf8')
+  };
+
+  const serverOptions = { logger: config.LOGGER, https: httpsOptions, http2: true };
+  const adapter = new FastifyAdapter(serverOptions);
   const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,    
-    new FastifyAdapter({ logger: config.LOGGER }), {
-    logger: console,
-  });
+    AppModule,
+    adapter,
+    {
+      logger: console,
+    });
 
   //Request-Response -> @MessagePattern
   app.connectMicroservice({
@@ -29,12 +40,17 @@ async function bootstrap() {
       port: config.micro.mp.PORT
     }
   });
-  
+
+  //Security
+  app.getHttpAdapter().getInstance().register(helmet);
+  app.enableCors();
+
   await app.startAllMicroservicesAsync();
 
   await app.listen(config.PORT);
 
-  Logger.log('Auth microservice running in port ' + config.PORT);
+  Logger.log('Auth microservice running on http://localhost: ' + config.micro.mp.PORT);
+  Logger.log(`Magic on http://localhost:${config.PORT}`, 'Bootstrap');
 }
 
 bootstrap();

@@ -5,7 +5,7 @@ const config = {
     EXPIRESIN: '12h',
     APP_ADAPTER: ADAPTER.FASTITY,
     ENVIROMENT: 'development',
-    LOGGER: true,
+    LOGGER: false,
 
     PORT: 4010,
     micro: {

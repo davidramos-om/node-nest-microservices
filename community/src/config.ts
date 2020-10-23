@@ -17,7 +17,7 @@ const config = {
             HOST: 'localhost',
             PORT: 4011, //@MessagePattern-> auth
         }
-    },    
+    },
     db: {
         core: {
             name: 'core',

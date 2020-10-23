@@ -2,11 +2,11 @@
 const config = {
     JWT_SECRETKEY: "DEVEL-024d1f83-683b-4d44-bc29-71a101b2d7fe-APP-AUTH",
     EXPIRESIN: '12h',
-    
+
     ENVIROMENT: 'development',
     LOGGER: false,
-    
     PORT: 5010,
+    GEN_DOCS: true,
     micro: {
         mp: {
             HOST: 'localhost',

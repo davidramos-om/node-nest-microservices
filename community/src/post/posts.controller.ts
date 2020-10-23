@@ -11,9 +11,11 @@ import { PostsService } from './posts.service';
 import { NotItemFound, ParamRequired } from '../common/exceptions';
 import { PostEntity } from './entity/post.entity';
 import { AuthGuard } from '../guards/AuthGuard';
+import { ApiTags } from '@nestjs/swagger';
 
 
 @Controller('posts')
+@ApiTags('post')
 @UseGuards(AuthGuard)
 export class PostsController
 {

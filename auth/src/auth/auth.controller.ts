@@ -3,19 +3,21 @@ import { AuthService } from './auth.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { LoginUserDto } from '../dto/user-login.dto';
 import { CheckPermissionMT3 } from 'src/dto/check-permission-mt3.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController
 {
   constructor(
     private readonly authService: AuthService) { }
- 
+
   @Get()
   getHello(): string
   {
     return this.authService.getHello();
   }
-  
+
   @Post('login')
   @UsePipes(ValidationPipe)
   async login(@Body() dto: LoginUserDto)
@@ -32,9 +34,9 @@ export class AuthController
 
       if (!data || !data.jwt)
         throw new HttpException('Token must be provided', HttpStatus.UNAUTHORIZED);
-      
+
       const res = this.authService.validateToken(data.jwt);
-      
+
       return res;
     } catch (e)
     {
@@ -49,7 +51,7 @@ export class AuthController
   {
     try
     {
-      
+
       const res = this.authService.CheckPermissionMT3(dto);
       return res;
     } catch (e)
@@ -65,7 +67,7 @@ export class AuthController
   {
     if (!data || !data.jwt)
       throw new HttpException('Token must be provided', HttpStatus.UNAUTHORIZED);
-    
+
     return this.authService.decodeToken(data.jwt);
   }
 }

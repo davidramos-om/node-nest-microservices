@@ -6,7 +6,7 @@ const config = {
     APP_ADAPTER: ADAPTER.FASTITY,
     ENVIROMENT: 'development',
     LOGGER: false,
-
+    GEN_DOCS: true,
     PORT: 4010,
     micro: {
         mp: {

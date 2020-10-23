@@ -6,23 +6,25 @@ import { UserEntity } from './user.entity';
 import { AuthGuard } from '../guards/AuthGuard';
 import { CreateUserDto } from './dto/user.create.dto';
 import { RegistrationStatus } from './dto/regisration-status.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
+@ApiTags('user')
 export class UserController
 {
     constructor(
-        
+
         private readonly userService: UserService
     ) { }
-    
+
     @MessagePattern({ role: 'user', cmd: 'get' })
     getUser(data: any): Promise<UserEntity>
     {
         // console.info("user microservices.getUser", data);
-        
+
         if (!data || !data.email)
             return null;
-        
+
         return this.userService.findOne({ email: data.email, enabled: true, app_id: data.app_id });
     }
 
@@ -31,7 +33,7 @@ export class UserController
     {
         if (!data.email)
             return null;
-        
+
         return this.userService.findOneByEmail(data.email);
     }
 
@@ -46,10 +48,10 @@ export class UserController
     public async register(@Body() createUserDto: CreateUserDto): Promise<RegistrationStatus>    
     {
         const result = await this.userService.createUser(createUserDto);
-  
+
         if (!result.success)
             throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
-          
+
         return result;
     }
 
@@ -64,7 +66,7 @@ export class UserController
     @Get('whoami')
     async Whoami(@Req() req: any): Promise<any>
     {
-        const header = req.headers['authorization']?.split(' ')[1];        
+        const header = req.headers['authorization']?.split(' ')[1];
 
         return this.userService.getLoguedUserInfo(header);
     }

@@ -13,6 +13,7 @@ import
 
 import config from './config';
 import { Logger } from '@nestjs/common';
+import { SetupDocs } from './docs';
 
 
 async function bootstrap()
@@ -41,8 +42,13 @@ async function bootstrap()
     }
   });
 
+  if (config.ENVIROMENT !== 'production' && config.GEN_DOCS)
+    SetupDocs(app);
+
   //Security
-  app.getHttpAdapter().getInstance().register(helmet);
+  if (config.ENVIROMENT === 'production')
+    app.getHttpAdapter().getInstance().register(helmet);
+
   app.enableCors();
 
   await app.startAllMicroservicesAsync();
@@ -50,7 +56,7 @@ async function bootstrap()
   await app.listen(config.PORT);
 
   Logger.log('Auth microservice running on http://localhost: ' + config.micro.mp.PORT);
-  Logger.log(`Magic on http://localhost:${config.PORT}`, 'Bootstrap');
+  Logger.log(`Magic on ${await app.getUrl()}`, 'Bootstrap');
 }
 
 bootstrap();

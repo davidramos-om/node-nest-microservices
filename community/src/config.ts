@@ -7,6 +7,7 @@ const config = {
     ENVIROMENT: 'development',
     APP_ADAPTER: ADAPTER.FASTITY,
     LOGGER: false,
+    GEN_DOCS: true,
     micro: {
         mp: {
             HOST: 'localhost',

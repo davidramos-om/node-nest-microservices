@@ -8,15 +8,19 @@ const config = {
     PORT: 5010,
     GEN_DOCS: true,
     micro: {
-        mp: {
+        me: {
             name: 'USER_CLIENT',
             HOST: 'localhost',
-            PORT: 5011 //@MessagePattern-> users
+            PORT: 5011 //@MessagePattern-> users       
         },
         auth: {
-            name: 'AUTH_CLIENT',
-            HOST: 'localhost',
-            PORT: 4011, //@MessagePattern-> auth
+            // name: 'AUTH_CLIENT',
+            // HOST: 'localhost',
+            // PORT: 4011, //@MessagePattern-> auth
+            name: 'AUTH_PACKAGE',
+            package: 'auth',
+            HOST: '0.0.0.0',
+            PORT: 50051
         }
     },
     db: {

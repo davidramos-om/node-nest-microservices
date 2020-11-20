@@ -38,8 +38,8 @@ async function bootstrap()
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
-      host: config.micro.mp.HOST,
-      port: config.micro.mp.PORT
+      host: config.micro.me.HOST,
+      port: config.micro.me.PORT
     }
   });
 
@@ -56,7 +56,7 @@ async function bootstrap()
 
   await app.listen(config.PORT);
 
-  Logger.log('User microservice running on https://localhost: ' + config.micro.mp.PORT);
+  Logger.log('User microservice running on https://localhost: ' + config.micro.me.PORT);
   Logger.log(`Magic on ${await app.getUrl()}`, 'Bootstrap');
 }
 

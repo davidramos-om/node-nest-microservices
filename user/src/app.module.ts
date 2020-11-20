@@ -36,12 +36,13 @@ import { join } from 'path';
     UserModule,
   ClientsModule.register([
     {
-      name: 'HERO_PACKAGE',
+      name: config.micro.auth.name,
       transport: Transport.GRPC,
       options: {
-        url: '0.0.0.0:50051',
-        package: 'hero',
+        url: `${config.micro.auth.HOST}:${config.micro.auth.PORT}`,
+        package: config.micro.auth.package,
         protoPath: join(__dirname, '../src/proto/hero.proto'),
+        loader: { keepCase: true },
       },
     },
   ]),

@@ -5,15 +5,18 @@ import { join } from 'path';
 import { Transport } from '@nestjs/microservices';
 import { Logger } from '@nestjs/common';
 
+import config from './config';
+
 const logger = new Logger('Main');
 
 const microservicesOptions = {
   transport: Transport.GRPC,
   options: {
-    name: 'HERO_PACKAGE',
-    url: '0.0.0.0:50051',
+    name: config.micro.me,
+    url: `${config.micro.me.HOST}:${config.micro.me.PORT}`,
     protoPath: join(__dirname, '../src/proto/hero.proto'),
-    package: 'hero',
+    package: config.micro.me.package,
+    loader: { keepCase: true },
   },
 };
 
@@ -23,10 +26,12 @@ async function bootstrap()
     AppModule,
     microservicesOptions,
   );
+
   await app.listen(() =>
   {
-    logger.log('Auth GRPC Microservice is listening');
+    logger.log('Auth GRPC Microservice is listening ');
   });
+
 }
 
 bootstrap();

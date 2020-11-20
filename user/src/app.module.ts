@@ -9,6 +9,10 @@ import { UserEntity } from './user/user.entity';
 import { UserModule } from './user/user.module';
 
 import config from './config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -20,7 +24,8 @@ import config from './config';
     database: config.db.regional.database,
     synchronize: config.db.regional.synchronize,
     entities: [UserEntity,]
-  }),
+  },
+  ),
   RateLimiterModule.register({
     points: 100,
     duration: 60,
@@ -28,9 +33,22 @@ import config from './config';
     errorMessage: 'Too many requests, please try again later.',
     keyPrefix: 'global',
   }),
-    UserModule],
-  controllers: [],
+    UserModule,
+  ClientsModule.register([
+    {
+      name: 'HERO_PACKAGE',
+      transport: Transport.GRPC,
+      options: {
+        url: '0.0.0.0:50051',
+        package: 'hero',
+        protoPath: join(__dirname, '../src/proto/hero.proto'),
+      },
+    },
+  ]),
+  ],
+  controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_INTERCEPTOR,
       useClass: RateLimiterInterceptor,

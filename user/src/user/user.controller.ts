@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Req, Post, UsePipes, ValidationPipe, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, UseGuards, Get, Req, Post, UsePipes, ValidationPipe, Body, HttpException, HttpStatus, Logger, OnModuleInit } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
 import { UserService } from './user.service';
@@ -8,14 +8,27 @@ import { CreateUserDto } from './dto/user.create.dto';
 import { RegistrationStatus } from './dto/regisration-status.interface';
 import { ApiTags } from '@nestjs/swagger';
 
+// import { IGrpcService } from '../grpc.interface';
+// import { Client, ClientGrpc } from '@nestjs/microservices';
+// import { microserviceOptions } from '../grpc.options';
+
+
 @Controller('user')
 @ApiTags('user')
 export class UserController
 {
-    constructor(
+    // private logger = new Logger('UserController');
 
-        private readonly userService: UserService
-    ) { }
+    // @Client(microserviceOptions)
+    // private client: ClientGrpc;
+    // private grpcService: IGrpcService;
+
+    constructor(private readonly userService: UserService) { }
+
+    // onModuleInit()
+    // {
+    //     this.grpcService = this.client.getService<IGrpcService>('AppController');
+    // }
 
     @MessagePattern({ role: 'user', cmd: 'get' })
     getUser(data: any): Promise<UserEntity>
@@ -70,4 +83,13 @@ export class UserController
 
         return this.userService.getLoguedUserInfo(header);
     }
+
+    // @Post('sum')
+    // @UsePipes(ValidationPipe)
+    // async accumulate(@Body('data') data: number[])
+    // {
+    //     this.logger.log('grpc Client - send data :  ' + data);
+
+    //     return this.grpcService.accumulate({ data });
+    // }
 }

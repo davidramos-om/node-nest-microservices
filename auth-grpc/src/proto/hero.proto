@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package hero;
+
+service HeroesService {
+  rpc FindOne (HeroById) returns (Hero) {}
+  rpc Login (LoginUserDto) returns (LoginStatus) {}
+}
+
+message LoginUserDto {
+  string email = 1;
+  string password = 2;
+  string app_id = 3;
+}
+
+message LoginStatus {
+  string id = 1;
+  string email = 2;
+  string screen_name = 3;
+  string accessToken = 4;
+  string expiresIn = 5;
+}
+
+message HeroById {
+  int32 id = 1;
+}
+
+message Hero {
+  int32 id = 1;
+  string name = 2;
+}

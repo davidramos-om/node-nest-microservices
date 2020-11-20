@@ -9,6 +9,7 @@ const config = {
     GEN_DOCS: true,
     micro: {
         mp: {
+            name: 'USER_CLIENT',
             HOST: 'localhost',
             PORT: 5011 //@MessagePattern-> users
         },

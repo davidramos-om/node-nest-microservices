@@ -19,13 +19,13 @@ import { SetupDocs } from './docs';
 async function bootstrap()
 {
 
-  // const httpsOptions = {
-  //   key: fs.readFileSync('./secret/key.pem', 'utf8'),
-  //   cert: fs.readFileSync('./secret/server.crt', 'utf8')
-  // };
+  const httpsOptions = {
+    key: fs.readFileSync('./secret/key.pem', 'utf8'),
+    cert: fs.readFileSync('./secret/server.crt', 'utf8')
+  };
 
-  // const serverOptions = { logger: config.LOGGER, https: httpsOptions, http2: true };
-  const serverOptions = { logger: config.LOGGER };
+  const serverOptions = { logger: config.LOGGER, https: httpsOptions, http2: true };
+  // const serverOptions = { logger: config.LOGGER };
   const adapter = new FastifyAdapter(serverOptions);
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
@@ -34,25 +34,25 @@ async function bootstrap()
       logger: console,
     });
 
-  // //Request-Response -> @MessagePattern
-  // app.connectMicroservice({
-  //   transport: Transport.TCP,
-  //   options: {
-  //     host: config.micro.mp.HOST,
-  //     port: config.micro.mp.PORT
-  //   }
-  // });
+  //Request-Response -> @MessagePattern
+  app.connectMicroservice({
+    transport: Transport.TCP,
+    options: {
+      host: config.micro.mp.HOST,
+      port: config.micro.mp.PORT
+    }
+  });
 
-  // if (config.ENVIROMENT !== 'production' && config.GEN_DOCS)
-  //   SetupDocs(app);
+  if (config.ENVIROMENT !== 'production' && config.GEN_DOCS)
+    SetupDocs(app);
 
-  // //Security
-  // if (config.ENVIROMENT === 'production')
-  //   app.getHttpAdapter().getInstance().register(helmet);
+  //Security
+  if (config.ENVIROMENT === 'production')
+    app.getHttpAdapter().getInstance().register(helmet);
 
-  // app.enableCors();
+  app.enableCors();
 
-  // await app.startAllMicroservicesAsync();
+  await app.startAllMicroservicesAsync();
 
   await app.listen(config.PORT);
 

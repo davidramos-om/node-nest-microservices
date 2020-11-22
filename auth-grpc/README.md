@@ -71,6 +71,10 @@ $ npm run test:cov
  })
 ```
 
+*  Nest can't resolve dependencies of the UserService (?). Please make sure that the argument UserEntityRepository at index [0] is available in the AppModule context.
+```
+  Remove UserService from (imports, providers, etc.) at app.module
+```
 ## Generate key and cert
 ```bash
   openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem

@@ -7,6 +7,18 @@ const config = {
     ENVIROMENT: 'development',
     LOGGER: false,
     GEN_DOCS: true,
+    db: {
+        regional: {
+            name: 'core',
+            host: 'localhost',
+            port: 5432,
+            username: 'postgres',
+            password: 'rf3t46qjgw',
+            database: 'regional',
+            synchronize: false,
+            logging: true,
+        }
+    },
     micro: {
         me: {
             name: 'AUTH_PACKAGE',

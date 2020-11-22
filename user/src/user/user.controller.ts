@@ -50,7 +50,7 @@ export class UserController
         return this.userService.findOneByEmail(data.email);
     }
 
-    @Get()
+    @Get('hello')
     getHello(): string
     {
         return this.userService.getHello();

@@ -8,17 +8,17 @@ service AuthService {
 }
 
 message LoginUserDto {
-  string email = 1;
-  string password = 2;
-  string app_id = 3;
+  required string email = 1;
+  required string password = 2;
+  required string app_id = 3;
 }
 
 message LoginStatus {
-  string id = 1;
-  string email = 2;
-  string screen_name = 3;
-  string accessToken = 4;
-  string expiresIn = 5;
+  required string id = 1;
+  required string email = 2;
+  required string screen_name = 3;
+  required string accessToken = 4;
+  required string expiresIn = 5;
 }
 
 message HeroById {

@@ -28,10 +28,6 @@ class LoginStatus
 @Controller('auth')
 export class AuthController
 {
-  @Get() home()
-  {
-    return 'Hello grpc auth services'
-  }
 
   @GrpcMethod('AuthService', 'FindOne')
   findOne(data: HeroById): Hero

@@ -3,7 +3,7 @@ import { MessagePattern } from '@nestjs/microservices';
 
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
-import { AuthGuard } from '../guards/AuthGuard';
+import { AuthGuard_MsgPattern } from '../guards/AuthGuard';
 import { CreateUserDto } from './dto/user.create.dto';
 import { RegistrationStatus } from './dto/regisration-status.interface';
 import { ApiTags } from '@nestjs/swagger';
@@ -55,14 +55,14 @@ export class UserController
         return result;
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard_MsgPattern)
     @Get('logged')
     async testAuth(): Promise<string>
     {
         return 'Congrats!! you are authorized';
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard_MsgPattern)
     @Get('whoami')
     async Whoami(@Req() req: any): Promise<any>
     {

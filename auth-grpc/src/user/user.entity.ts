@@ -10,6 +10,7 @@ import
 } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
+import { generatePassword } from 'src/common/utils';
 
 @Entity('users')
 @Index(["email", "app_id", "enabled"], { unique: true })
@@ -41,7 +42,6 @@ export class UserEntity
     @BeforeInsert()
     async hashPassword()
     {
-        const saltRounds = 10;
-        this.password = await bcrypt.hash(this.password, saltRounds);
+        this.password = await generatePassword(this.password);
     }
 }

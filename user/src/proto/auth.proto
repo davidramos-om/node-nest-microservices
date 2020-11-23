@@ -3,10 +3,11 @@ import "google/protobuf/timestamp.proto";
 
 package auth;
 
-service AuthService {
-  rpc FindOne (HeroById) returns (Hero) {}
+service AuthService {  
   rpc FindUserByEmail (UserByEmail) returns (User) {}
   rpc Login (LoginUserDto) returns (LoginStatus) {}
+  rpc IsLoggedIn (Token) returns (LoggedIn) {}
+  rpc WhoAmI (Token) returns (LoginStatus) {}
 }
 
 message LoginUserDto {
@@ -23,17 +24,16 @@ message LoginStatus {
   required string expiresIn = 5;
 }
 
-message HeroById {
-  int32 id = 1;
+message Token {
+  string jwt = 1;
 }
 
-message Hero {
-  int32 id = 1;
-  string name = 2;
+message LoggedIn {
+  required bool loggedIn = 1;
 }
 
 message UserByEmail {
-  string email = 1;
+  required string email = 1;
 }
 
 message User {

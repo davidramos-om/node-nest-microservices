@@ -1,47 +1,16 @@
-import { Controller, UseGuards, Get, Req, Post, UsePipes, ValidationPipe, Body, HttpException, HttpStatus, Logger, OnModuleInit } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Controller, UseGuards, Post, UsePipes, ValidationPipe, Body, HttpException, HttpStatus } from '@nestjs/common';
+
 
 import { UserService } from './user.service';
-import { UserEntity } from './user.entity';
-import { AuthGuard_MsgPattern } from '../guards/AuthGuard';
 import { CreateUserDto } from './dto/user.create.dto';
 import { RegistrationStatus } from './dto/regisration-status.interface';
 import { ApiTags } from '@nestjs/swagger';
-
-// import { IGrpcService } from '../grpc.interface';
-// import { Client, ClientGrpc } from '@nestjs/microservices';
-// import { microserviceOptions } from '../grpc.options';
-
 
 @Controller('user')
 @ApiTags('user')
 export class UserController
 {
     constructor(private readonly userService: UserService) { }
-
-    @MessagePattern({ role: 'user', cmd: 'get' })
-    getUser(data: any): Promise<UserEntity>
-    {
-        if (!data || !data.email)
-            return null;
-
-        return this.userService.findOne({ email: data.email, enabled: true, app_id: data.app_id });
-    }
-
-    @MessagePattern({ role: 'user', cmd: 'email' })
-    getUserByEmail(data: any): Promise<UserEntity>
-    {
-        if (!data.email)
-            return null;
-
-        return this.userService.findOneByEmail(data.email);
-    }
-
-    @Get('hello')
-    getHello(): string
-    {
-        return this.userService.getHello();
-    }
 
     @Post('register')
     @UsePipes(ValidationPipe)
@@ -54,29 +23,4 @@ export class UserController
 
         return result;
     }
-
-    @UseGuards(AuthGuard_MsgPattern)
-    @Get('logged')
-    async testAuth(): Promise<string>
-    {
-        return 'Congrats!! you are authorized';
-    }
-
-    @UseGuards(AuthGuard_MsgPattern)
-    @Get('whoami')
-    async Whoami(@Req() req: any): Promise<any>
-    {
-        const header = req.headers['authorization']?.split(' ')[1];
-
-        return this.userService.getLoguedUserInfo(header);
-    }
-
-    // @Post('sum')
-    // @UsePipes(ValidationPipe)
-    // async accumulate(@Body('data') data: number[])
-    // {
-    //     this.logger.log('grpc Client - send data :  ' + data);
-
-    //     return this.grpcService.accumulate({ data });
-    // }
 }

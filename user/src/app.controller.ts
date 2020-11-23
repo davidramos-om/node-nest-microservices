@@ -1,12 +1,11 @@
-import { Controller, Get, Logger, OnModuleInit, Inject, Query, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, OnModuleInit, Inject, Query, HttpException, HttpStatus, UseGuards, Post, UsePipes, ValidationPipe, Body, Req } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 
-import { Observable } from 'rxjs';
 import { AuthService } from './proto/auth.interface';
 
 
 import config from './config';
-import { AuthGuard_GRPC, AuthGuard_MsgPattern } from './guards/AuthGuard';
+import { AuthGuard_GRPC } from './guards/AuthGuard';
 
 export class LoginUserDto
 {
@@ -31,18 +30,14 @@ export class AppController implements OnModuleInit
   @Get()
   getHello(): string
   {
-    return 'Hello World!!@';
+    return 'I am the User Microservice';
   }
 
-  @Get('login')
-  async Login()
+  @Post('login')
+  @UsePipes(ValidationPipe)
+  async Login(@Body() dto: LoginUserDto)
   {
     this.logger.log("Call remote procedure", 'login');
-
-    const dto = new LoginUserDto();
-    dto.app_id = "0e5aea12-c3a9-4a0a-a80c-54343148d4cd";
-    dto.email = "david.ramos@develappglobal.com";
-    dto.password = "ASdf1234";
 
     return this.authService.login(dto)
       .toPromise()
@@ -68,12 +63,10 @@ export class AppController implements OnModuleInit
     if (!email)
       throw new HttpException({ status: HttpStatus.BAD_REQUEST, error: 'Set a valid email', }, HttpStatus.BAD_REQUEST);
 
-    console.time('FindByEmail');
     return this.authService.findUserByEmail({ email: email })
       .toPromise()
       .then((result) =>
       {
-        console.timeEnd('FindByEmail');
         return new Promise<any>((resolve) =>
         {
           resolve(result);
@@ -85,12 +78,20 @@ export class AppController implements OnModuleInit
       })
   }
 
+  @UseGuards(AuthGuard_GRPC)
+  @Get('logged')
+  async testAuth(): Promise<string>
+  {
+    return 'Congrats!! you are authorized';
+  }
 
   @Get('whoami')
   @UseGuards(AuthGuard_GRPC)
-  async WhoAmI(@Query('authorization') authorization: string)
+  async WhoAmI(@Req() req: any)
   {
     this.logger.log("Call remote procedure", 'WhoAmI');
+
+    const authorization = req.headers['authorization']?.split(' ')[1];
 
     if (!authorization)
       throw new HttpException({ status: HttpStatus.UNAUTHORIZED }, HttpStatus.UNAUTHORIZED);

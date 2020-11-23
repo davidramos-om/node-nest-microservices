@@ -14,7 +14,7 @@ const microservicesOptions = {
   options: {
     name: config.micro.me,
     url: `${config.micro.me.HOST}:${config.micro.me.PORT}`,
-    protoPath: join(__dirname, '../src/proto/hero.proto'),
+    protoPath: join(__dirname, '../src/proto/auth.proto'),
     package: config.micro.me.package,
     loader: { keepCase: true },
   },

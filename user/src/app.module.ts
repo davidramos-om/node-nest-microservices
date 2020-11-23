@@ -41,7 +41,7 @@ import { join } from 'path';
       options: {
         url: `${config.micro.auth.HOST}:${config.micro.auth.PORT}`,
         package: config.micro.auth.package,
-        protoPath: join(__dirname, '../src/proto/hero.proto'),
+        protoPath: join(__dirname, '../src/proto/auth.proto'),
         loader: { keepCase: true },
       },
     },

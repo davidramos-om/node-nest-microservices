@@ -7,6 +7,7 @@ const config = {
     LOGGER: false,
     PORT: 5010,
     GEN_DOCS: true,
+    DOCS_ENDPOINT: 'api/docs',
     micro: {
         me: {
             name: 'USER_CLIENT',

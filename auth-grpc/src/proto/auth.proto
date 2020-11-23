@@ -1,9 +1,11 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 
 package auth;
 
 service AuthService {
   rpc FindOne (HeroById) returns (Hero) {}
+  rpc FindUserByEmail (UserByEmail) returns (User) {}
   rpc Login (LoginUserDto) returns (LoginStatus) {}
 }
 
@@ -28,4 +30,15 @@ message HeroById {
 message Hero {
   int32 id = 1;
   string name = 2;
+}
+
+message UserByEmail {
+  required string email = 1;
+}
+
+message User {
+  string id = 1;
+  string screen_name = 2;
+  string email = 3;
+  google.protobuf.Timestamp createdAt = 4;
 }

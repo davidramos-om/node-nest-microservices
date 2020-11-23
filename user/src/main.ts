@@ -56,7 +56,8 @@ async function bootstrap()
 
   await app.listen(config.PORT);
 
-  Logger.log('User microservice running on https://localhost: ' + config.micro.me.PORT);
+  Logger.log('User microservice running on https://localhost:' + config.micro.me.PORT);
+  Logger.log(`Api Docs is on ${await app.getUrl()}/${config.DOCS_ENDPOINT}`, 'Documentation');
   Logger.log(`Magic on ${await app.getUrl()}`, 'Bootstrap');
 }
 

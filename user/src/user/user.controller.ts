@@ -17,24 +17,11 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('user')
 export class UserController
 {
-    // private logger = new Logger('UserController');
-
-    // @Client(microserviceOptions)
-    // private client: ClientGrpc;
-    // private grpcService: IGrpcService;
-
     constructor(private readonly userService: UserService) { }
-
-    // onModuleInit()
-    // {
-    //     this.grpcService = this.client.getService<IGrpcService>('AppController');
-    // }
 
     @MessagePattern({ role: 'user', cmd: 'get' })
     getUser(data: any): Promise<UserEntity>
     {
-        // console.info("user microservices.getUser", data);
-
         if (!data || !data.email)
             return null;
 

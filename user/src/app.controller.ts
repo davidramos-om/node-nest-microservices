@@ -1,11 +1,9 @@
-import { Controller, Get, Logger, Post, Body, OnModuleInit, Inject } from '@nestjs/common';
+import { Controller, Get, Logger, Post, Body, OnModuleInit, Inject, Req, Query, HttpException, UseFilters, HttpStatus } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
+import { resolveAny } from 'dns';
 import { Observable } from 'rxjs';
-import { AppService } from './app.service';
+import { GrpcExceptionFilter } from './common/exceptions';
 
-// import { IGrpcService } from './grpc.interface';
-// import { Client, ClientGrpc } from '@nestjs/microservices';
-// import { microserviceOptions } from './grpc.options';
 import config from './config';
 
 class LoginUserDto
@@ -15,9 +13,11 @@ class LoginUserDto
   app_id: string;
 }
 
+//Important : must start with lowercase
 interface AuthService
 {
   findOne(data: { id: number }): Observable<any>;
+  findUserByEmail(data: { email: string }): Observable<any>;
   login(data: LoginUserDto): Observable<any>;
 }
 
@@ -73,5 +73,28 @@ export class AppController implements OnModuleInit
     // });
 
     return data;
+  }
+
+  @Get('FindByEmail')
+  async FindByEmail(@Query('email') email: string)
+  {
+    this.logger.log("Call remote procedure", 'FindByEmail');
+
+    if (!email)
+      throw new HttpException({ status: HttpStatus.FORBIDDEN, error: 'Set a valid email', }, HttpStatus.FORBIDDEN);
+
+    return this.authService.findUserByEmail({ email: email })
+      .toPromise()
+      .then((result) =>
+      {
+        return new Promise<any>((resolve) =>
+        {
+          resolve(result);
+        });
+
+      }).catch((err) =>
+      {
+        throw new HttpException({ status: HttpStatus.FAILED_DEPENDENCY, error: err.details, }, HttpStatus.FAILED_DEPENDENCY);
+      })
   }
 }

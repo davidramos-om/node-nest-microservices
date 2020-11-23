@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { url } from 'inspector';
+
+import config from './config';
 
 export const SetupDocs = (app: INestApplication) =>
 {
@@ -15,7 +16,7 @@ export const SetupDocs = (app: INestApplication) =>
     const document = SwaggerModule.createDocument(app, options);
 
 
-    SwaggerModule.setup('api/docs', app, document, {
+    SwaggerModule.setup(config.DOCS_ENDPOINT, app, document, {
         explorer: true,
         swaggerOptions: {
             filter: true,

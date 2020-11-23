@@ -22,6 +22,7 @@ const config = {
     micro: {
         me: {
             name: 'AUTH_PACKAGE',
+            serviceName: 'AuthService',
             HOST: '0.0.0.0',
             package: 'auth',
             PORT: 50051

@@ -12,6 +12,7 @@ import config from './config';
 @Module({
   imports: [
     AuthModule,
+    UserModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       port: config.db.regional.port,
@@ -23,7 +24,6 @@ import config from './config';
       entities: [UserEntity,]
     },
     ),
-    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

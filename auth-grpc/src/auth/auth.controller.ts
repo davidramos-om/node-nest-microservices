@@ -1,5 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import config from 'src/config';
+import { UserDto } from 'src/user/dto/user.dto';
+
 
 interface HeroById
 {
@@ -29,7 +32,7 @@ class LoginStatus
 export class AuthController
 {
 
-  @GrpcMethod('AuthService', 'FindOne')
+  @GrpcMethod(config.micro.me.serviceName, 'FindOne')
   findOne(data: HeroById): Hero
   {
     console.info('Auth-GRPC - Heroes-FindOne', data);
@@ -42,7 +45,7 @@ export class AuthController
     return items.find(({ id }) => id === data.id);
   }
 
-  @GrpcMethod('AuthService', 'Login')
+  @GrpcMethod(config.micro.me.serviceName, 'Login')
   Login(data: LoginUserDto): LoginStatus
   {
     console.info('Auth-GRPC - Login', data);
@@ -56,7 +59,5 @@ export class AuthController
     status.screen_name = "dramos";
 
     return status;
-
   }
-
 }

@@ -1,12 +1,14 @@
 import { ADAPTER } from './common/enums';
 
 const config = {
-    JWT_SECRETKEY: "DEVEL-024d1f83-683b-4d44-bc29-71a101b2d7fe-APP-AUTH",
+
+    JWT_SECRETKEY: "MjAtYXV0aC10b2tlbi1nZW4tZ2xvYmFsLWRldmVsYXBwLTIwLWhuLWZsLXVz", //=20-auth-token-gen-global-develapp-20-hn-fl-us
     EXPIRESIN: '24h',
     APP_ADAPTER: ADAPTER.FASTITY,
     ENVIROMENT: 'development',
     LOGGER: false,
     GEN_DOCS: true,
+    PORT_HTTP: 50050,
     db: {
         regional: {
             name: 'core',
@@ -23,14 +25,15 @@ const config = {
         me: {
             name: 'AUTH_PACKAGE',
             serviceName: 'AuthService',
-            HOST: '0.0.0.0',
+            HOST: 'localhost',
             package: 'auth',
-            PORT: 50051
+            PORT_GRPC: 50051,
+            PORT_TCP: 50052
         },
         users: {
             name: 'USER_CLIENT',
             HOST: 'localhost',
-            PORT: 5011, //@MessagePattern-> users
+            PORT: 5011,
         }
     }
 }

@@ -8,7 +8,7 @@ import { FindConditions, Repository } from 'typeorm';
 import { LoginUserDto } from 'src/user/dto/login.dto';
 import { LoginStatus } from 'src/user/login.status.dto';
 import { UserEntity } from 'src/user/user.entity';
-import { GrpcExc } from 'src/common/exceptions';
+import { Exc, GrpcExc } from 'src/common/exceptions';
 import { comparePasswords } from 'src/common/utils';
 
 import config from 'src/config';
@@ -54,7 +54,7 @@ export class AuthService
         return payload;
     }
 
-    decodeToken(data: any): JwtPayload
+    decodeToken(data: any): LoginStatus
     {
         if (!data || !data.jwt)
             throw GrpcExc('Token must be provided', HttpStatus.BAD_REQUEST);
@@ -63,31 +63,34 @@ export class AuthService
         if (!decode)
             throw GrpcExc('Invalid token.', HttpStatus.BAD_REQUEST);
 
+        console.info("decode", decode);
         return {
             email: decode['email'],
             id: decode['id'],
-            screen_name: decode['screen_name']
+            screen_name: decode['screen_name'],
+            accessToken: data.jwt,
+            expiresIn: decode['exp'],
         };
     }
 
-    async Login(dto: LoginUserDto): Promise<LoginStatus>
+    async Login(dto: LoginUserDto, isGrpc: boolean): Promise<LoginStatus>
     {
         if (!dto || !dto.email || !dto.password || !dto.app_id)
-            throw GrpcExc('Missing login information', HttpStatus.BAD_REQUEST);
+            throw Exc(isGrpc, 'Missing login information', HttpStatus.BAD_REQUEST);
 
         const cond = { email: dto.email, enabled: true, app_id: dto.app_id };
         const user = await this.findOne(cond);
 
         if (!user)
-            throw GrpcExc('User not found.', HttpStatus.NOT_FOUND);
+            throw Exc(isGrpc, 'User not found.', HttpStatus.NOT_FOUND);
 
         if (!user.id || !user.email)
-            throw GrpcExc('Invalid user data', HttpStatus.NOT_FOUND);
+            throw Exc(isGrpc, 'Invalid user data', HttpStatus.NOT_FOUND);
 
         const areEqual = await comparePasswords(dto.password, user.password);
 
         if (!areEqual)
-            throw GrpcExc('User not found or invalid credentials.', HttpStatus.UNAUTHORIZED);
+            throw Exc(isGrpc, 'User not found or invalid credentials.', HttpStatus.UNAUTHORIZED);
 
         // generate and sign token
         const token = this.createToken(user.id, user.email, user.screen_name);
@@ -107,9 +110,9 @@ export class AuthService
     {
         try
         {
-            const cond = { email: email, password: password, app_id: app_id };
+            const cond = { email: email, password: password, app_id: app_id, enabled: true };
             const user = await this.findOne(cond);
-            const areEqual = await comparePasswords(user?.password, password);
+            const areEqual = await comparePasswords(password, user?.password);
 
             if (areEqual)
                 return user;
@@ -117,7 +120,6 @@ export class AuthService
             return null;
         } catch (e)
         {
-            console.log(e, 'validateUser', 'auth.services');
             return null
         }
     }

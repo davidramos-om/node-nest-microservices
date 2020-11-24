@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe, Logger } from '@nestjs/common';
+import { Body, Controller, Post, UsePipes, ValidationPipe, Logger, Headers } from '@nestjs/common';
 import { GrpcMethod, MessagePattern } from '@nestjs/microservices';
 
 import { LoginStatus } from 'src/user/login.status.dto';
@@ -20,32 +20,43 @@ export class AuthController
   @UsePipes(ValidationPipe)
   Login_Http(@Body() dto: LoginUserDto)
   {
-    this.logger.log("HTTP Auth  - Login")
+    this.logger.log("HTTP-Auth  - Login")
     return this.authService.Login(dto, false);
   }
 
   @MessagePattern({ role: 'auth', cmd: 'login' })
   Login_Tpc(@Body() dto: LoginUserDto)
   {
-    this.logger.log("TCP Auth  - Login")
+    this.logger.log("TCP-Auth  - Login")
     return this.authService.Login(dto, false);
   }
 
   @GrpcMethod(config.micro.me.serviceName, 'Login')
   Login_Grpc(dto: LoginUserDto): Promise<LoginStatus>
   {
-    this.logger.log("GRPC Auth  - Login")
+    this.logger.log("GRPC-Auth  - Login")
     return this.authService.Login(dto, true);
   }
 
+  @Post('logout')
+  Logout_Http(@Headers('authorization') authorization: string)
+  {
+    this.logger.log("HTTP-Auth  - logout")
+
+    if (!authorization)
+      return;
+
+    this.authService.logout(authorization)
+  }
+
   @GrpcMethod(config.micro.me.serviceName, 'IsLoggedIn')
-  IsLoggedIn(data: any): { loggedIn: boolean }
+  async IsLoggedIn(data: any): Promise<any>
   {
     try
     {
-      this.logger.log("GRPC Auth  - IsLoggedIn")
+      this.logger.log("GRPC-Auth  - IsLoggedIn")
 
-      const res = this.authService.validateToken(data);
+      const res = await this.authService.validateToken(data);
 
       return { loggedIn: res ? true : false };
 

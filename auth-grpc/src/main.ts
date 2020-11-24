@@ -9,6 +9,7 @@ import * as helmet from 'fastify-helmet';
 
 import config from './config';
 import { AppModule } from './app.module';
+import { ENVIROMENT } from './common/enums';
 
 const logger = new Logger('AuthServices');
 
@@ -48,7 +49,7 @@ async function bootstrap()
   app.connectMicroservice(tpc_microservices_options);
 
   //Security
-  if (config.ENVIROMENT === 'production')
+  if (config.ENVIROMENT === ENVIROMENT.LIVE)
     app.getHttpAdapter().getInstance().register(helmet);
 
   await app.startAllMicroservicesAsync();

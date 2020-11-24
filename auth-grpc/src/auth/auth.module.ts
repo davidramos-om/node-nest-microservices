@@ -5,15 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserEntity } from 'src/user/user.entity';
 
+import { CacheModule } from '../cache/cache.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-// import { LocalStrategy } from "./local.strategy";
 import config from 'src/config';
-
-
 
 @Module({
     imports: [
+        CacheModule,
         TypeOrmModule.forFeature([UserEntity]),
         JwtModule.register({
             secret: config.JWT_SECRETKEY,

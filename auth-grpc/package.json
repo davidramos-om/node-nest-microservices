@@ -1,5 +1,5 @@
 {
-  "name": "auth-grpc",
+  "name": "develapp-auth-microservices",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -31,6 +31,8 @@
     "@nestjs/platform-fastify": "^7.5.5",
     "@nestjs/typeorm": "^7.1.5",
     "bcrypt": "^5.0.0",
+    "cache-manager": "^3.4.0",
+    "cache-manager-ioredis": "^2.1.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "fastify-helmet": "^5.0.3",

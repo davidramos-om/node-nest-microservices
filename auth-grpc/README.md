@@ -57,6 +57,17 @@ $ npm run test:cov
   rm -rf dist/
 ```
 
+* Error L Connect ECONNREFUSED 127.0.0.1:6379 (Redis port)<br>
+[Redis Link](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8)
+```bash
+  # Install Redis
+  sudo apt-get install redis-server #Linux
+  #Mac
+  brew install redis
+  brew services start redis
+  brew services stop redis  
+```
+
 * In order to use "defaultStrategy", please, ensure to import PassportModule in each place where AuthGuard() is being used.
  ```
   just change  @UseGuards(AuthGuard('jwt')) 

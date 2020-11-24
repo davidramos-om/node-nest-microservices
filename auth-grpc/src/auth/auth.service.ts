@@ -1,9 +1,8 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-
+import { HttpStatus, Injectable, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindConditions, Repository } from 'typeorm';
+import { Cache } from 'cache-manager';
 
 import { LoginUserDto } from 'src/user/dto/login.dto';
 import { LoginStatus } from 'src/user/login.status.dto';
@@ -14,18 +13,29 @@ import { comparePasswords } from 'src/common/utils';
 import config from 'src/config';
 import { AccessToken, JwtPayload } from './payload.interface';
 
-
-
 @Injectable()
 export class AuthService
 {
     constructor(
 
+        @Inject(CACHE_MANAGER) private readonly cache: Cache,
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
 
         private readonly jwtService: JwtService,
     ) { }
+
+    getToken(token: string): string
+    {
+        if (!token)
+            return '';
+
+        let jwt = token;
+        if (jwt.startsWith('Bearer'))
+            jwt = jwt.split(' ')[1];
+
+        return jwt;
+    }
 
     findOne(query: FindConditions<UserEntity>): Promise<UserEntity>
     {
@@ -45,13 +55,24 @@ export class AuthService
         };
     }
 
-    validateToken(data: any)
+    async validateToken(data: any): Promise<any>
     {
         if (!data || !data.jwt)
             throw GrpcExc('Token must be provided', HttpStatus.BAD_REQUEST);
 
-        const payload = this.jwtService.verify(data.jwt);
-        return payload;
+        const jwt = this.getToken(data.jwt);
+        const payload = this.jwtService.verify(jwt) as JwtPayload
+        if (!payload)
+            return null;
+
+        const value = await this.cache.get(payload.email);
+        if (!value)
+            return null //Token was destroy
+
+        if (jwt != value)
+            return null;
+
+        return payload
     }
 
     decodeToken(data: any): LoginStatus
@@ -59,11 +80,12 @@ export class AuthService
         if (!data || !data.jwt)
             throw GrpcExc('Token must be provided', HttpStatus.BAD_REQUEST);
 
-        const decode = this.jwtService.decode(data.jwt);
+        const jwt = this.getToken(data.jwt);
+
+        const decode = this.jwtService.decode(jwt);
         if (!decode)
             throw GrpcExc('Invalid token.', HttpStatus.BAD_REQUEST);
 
-        console.info("decode", decode);
         return {
             email: decode['email'],
             id: decode['id'],
@@ -103,6 +125,8 @@ export class AuthService
         status.accessToken = token.accessToken;
         status.expiresIn = token.expiresIn
 
+        this.cache.set(user.email, token.accessToken);
+
         return status;
     }
 
@@ -121,6 +145,27 @@ export class AuthService
         } catch (e)
         {
             return null
+        }
+    }
+
+    async logout(jwt: string)
+    {
+        try 
+        {
+            if (!jwt)
+                return;
+
+            jwt = this.getToken(jwt);
+
+            const decode = this.jwtService.decode(jwt) as LoginStatus;
+            if (!decode)
+                return;
+
+            this.cache.del(decode.email);
+        }
+        catch (error)
+        {
+
         }
     }
 }

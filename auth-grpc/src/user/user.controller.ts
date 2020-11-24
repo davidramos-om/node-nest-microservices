@@ -1,4 +1,4 @@
-import { Controller, NotFoundException } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { UserDto } from './dto/user.dto';
 
@@ -8,12 +8,13 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController
 {
+    private logger = new Logger();
     constructor(private readonly userService: UserService) { }
 
     @GrpcMethod(config.micro.me.serviceName, 'FindUserByEmail')
     async FindUserByEmail(data: any): Promise<UserDto>
     {
-        console.info('Auth-GRPC - FindUserByEmail', data.email);
+        this.logger.log('GRPC-Auth - FindUserByEmail');
 
         if (!data.email)
         {

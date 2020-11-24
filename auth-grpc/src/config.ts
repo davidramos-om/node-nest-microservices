@@ -1,11 +1,11 @@
-import { ADAPTER } from './common/enums';
+import { ADAPTER, ENVIROMENT } from './common/enums';
 
 const config = {
 
     JWT_SECRETKEY: "MjAtYXV0aC10b2tlbi1nZW4tZ2xvYmFsLWRldmVsYXBwLTIwLWhuLWZsLXVz", //=20-auth-token-gen-global-develapp-20-hn-fl-us
     EXPIRESIN: '24h',
     APP_ADAPTER: ADAPTER.FASTITY,
-    ENVIROMENT: 'development',
+    ENVIROMENT: ENVIROMENT.DEVELOPMENT,
     LOGGER: false,
     GEN_DOCS: true,
     PORT_HTTP: 50050,
@@ -29,6 +29,13 @@ const config = {
             package: 'auth',
             PORT_GRPC: 50051,
             PORT_TCP: 50052
+        },
+        redis:
+        {
+            name: 'REDIS_CACHE',
+            HOST: 'localhost',
+            PORT: 6379,
+            TIME: 3600
         },
         users: {
             name: 'USER_CLIENT',

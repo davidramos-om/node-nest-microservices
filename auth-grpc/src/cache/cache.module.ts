@@ -3,7 +3,7 @@ import
     CACHE_MANAGER,
     CacheModule as BaseCacheModule,
     Inject,
-    Logger,
+    // Logger,
     Module,
     OnModuleInit,
 } from '@nestjs/common';
@@ -39,7 +39,7 @@ export class CacheModule implements OnModuleInit
 
     public onModuleInit(): any
     {
-        const logger = new Logger('Cache');
+        // const logger = new Logger('Cache');
 
         const commands = [
             'get',
@@ -55,14 +55,14 @@ export class CacheModule implements OnModuleInit
             cache[commandName] = async (...args) =>
             {
                 // Computes the duration
-                const start = new Date();
+                // const start = new Date();
                 const result = await oldCommand.call(cache, ...args);
-                const end = new Date();
-                const duration = end.getTime() - start.getTime();
+                // const end = new Date();
+                // const duration = end.getTime() - start.getTime();
 
-                // Avoid logging the options
-                args = args.slice(0, 2);
-                logger.log(`${commandName.toUpperCase()} ${args.join(', ')} - ${duration}ms`);
+                // // Avoid logging the options
+                // args = args.slice(0, 2);
+                // logger.log(`${commandName.toUpperCase()} ${args.join(', ')} - ${duration}ms`);
 
                 return result;
             };

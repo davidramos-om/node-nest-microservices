@@ -9,7 +9,6 @@ import
     Index,
 } from 'typeorm';
 
-import * as bcrypt from 'bcrypt';
 import { generatePassword } from 'src/common/utils';
 
 @Entity('users')
